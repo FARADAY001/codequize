@@ -51,7 +51,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Créer un compte')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

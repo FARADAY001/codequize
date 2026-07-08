@@ -41,7 +41,7 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Connexion'), automaticallyImplyLeading: false),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
