@@ -11,6 +11,28 @@ import 'test_helpers/db_test_setup.dart';
 /// Le jeu de questions de base (questions_data.dart) contient exactement
 /// 2 questions pour Dart / Débutant : ce test s'appuie sur ce nombre connu
 /// pour vérifier le calcul du pourcentage.
+///
+/// Les propositions étant mélangées à l'affichage (QuizProvider mélange
+/// leur ordre et le renouvelle périodiquement), on ne peut plus utiliser
+/// `question.bonneReponseIndex` comme index à sélectionner : il faut
+/// retrouver la position, dans l'ordre mélangé courant, qui correspond à
+/// la bonne réponse (ou à une mauvaise), via `estPositionBonneReponse`.
+int _indexBonneReponse(QuizProvider quiz) {
+  final total = quiz.propositionsAffichees.length;
+  for (var i = 0; i < total; i++) {
+    if (quiz.estPositionBonneReponse(i)) return i;
+  }
+  throw StateError('Aucune bonne réponse trouvée dans les propositions affichées');
+}
+
+int _indexMauvaiseReponse(QuizProvider quiz) {
+  final total = quiz.propositionsAffichees.length;
+  for (var i = 0; i < total; i++) {
+    if (!quiz.estPositionBonneReponse(i)) return i;
+  }
+  throw StateError('Aucune mauvaise réponse trouvée dans les propositions affichées');
+}
+
 void main() {
   setUpAll(() async {
     await initialiserDbPourTests();
@@ -33,8 +55,7 @@ void main() {
 
     // Répond correctement à toutes les questions.
     while (!quiz.quizTermine) {
-      final question = quiz.questionCourante!;
-      quiz.selectionnerReponse(question.bonneReponseIndex);
+      quiz.selectionnerReponse(_indexBonneReponse(quiz));
       quiz.validerReponse();
       quiz.questionSuivante();
     }
@@ -49,10 +70,8 @@ void main() {
     await quiz.demarrerQuiz();
 
     while (!quiz.quizTermine) {
-      final question = quiz.questionCourante!;
       // Choisit systématiquement une réponse différente de la bonne.
-      final mauvaiseReponse = (question.bonneReponseIndex + 1) % question.propositions.length;
-      quiz.selectionnerReponse(mauvaiseReponse);
+      quiz.selectionnerReponse(_indexMauvaiseReponse(quiz));
       quiz.validerReponse();
       quiz.questionSuivante();
     }
@@ -71,14 +90,12 @@ void main() {
 
     var index = 0;
     while (!quiz.quizTermine) {
-      final question = quiz.questionCourante!;
       if (index == 0) {
         // Première question : bonne réponse.
-        quiz.selectionnerReponse(question.bonneReponseIndex);
+        quiz.selectionnerReponse(_indexBonneReponse(quiz));
       } else {
         // Questions suivantes : mauvaise réponse.
-        final mauvaiseReponse = (question.bonneReponseIndex + 1) % question.propositions.length;
-        quiz.selectionnerReponse(mauvaiseReponse);
+        quiz.selectionnerReponse(_indexMauvaiseReponse(quiz));
       }
       quiz.validerReponse();
       quiz.questionSuivante();
@@ -96,8 +113,7 @@ void main() {
     await quiz.demarrerQuiz();
 
     while (!quiz.quizTermine) {
-      final question = quiz.questionCourante!;
-      quiz.selectionnerReponse(question.bonneReponseIndex);
+      quiz.selectionnerReponse(_indexBonneReponse(quiz));
       quiz.validerReponse();
       quiz.questionSuivante();
     }

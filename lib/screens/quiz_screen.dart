@@ -89,8 +89,10 @@ class QuizScreen extends StatelessWidget {
                       question.enonce,
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
-                    const SizedBox(height: 24),
-                    _QuizOptions(question: question),
+                    const SizedBox(height: 8),
+                    const _QuizMinuteur(),
+                    const SizedBox(height: 16),
+                    const _QuizOptions(),
                     const _QuizExplanation(),
                   ],
                 ),
@@ -107,19 +109,23 @@ class QuizScreen extends StatelessWidget {
 /// Liste des propositions de réponse. Isolée dans son propre widget afin
 /// que seule cette portion de l'écran se reconstruise lors de la sélection
 /// d'une réponse (context.watch limité à ce sous-arbre).
+///
+/// L'ordre des propositions est mélangé côté [QuizProvider] et re-mélangé
+/// automatiquement toutes les minutes tant que la réponse n'est pas
+/// validée : ce widget affiche donc toujours `propositionsAffichees`,
+/// jamais `question.propositions` directement.
 class _QuizOptions extends StatelessWidget {
-  final Question question;
-
-  const _QuizOptions({required this.question});
+  const _QuizOptions();
 
   @override
   Widget build(BuildContext context) {
     final quiz = context.watch<QuizProvider>();
+    final propositions = quiz.propositionsAffichees;
 
     return Column(
-      children: List.generate(question.propositions.length, (i) {
+      children: List.generate(propositions.length, (i) {
         final estChoisie = quiz.reponseChoisie == i;
-        final estBonneReponse = i == question.bonneReponseIndex;
+        final estBonneReponse = quiz.estPositionBonneReponse(i);
         Color? couleur;
         if (quiz.reponseValidee) {
           if (estBonneReponse) {
@@ -136,12 +142,33 @@ class _QuizOptions extends StatelessWidget {
           child: Card(
             color: couleur,
             child: ListTile(
-              title: Text(question.propositions[i]),
+              title: Text(propositions[i]),
               onTap: () => context.read<QuizProvider>().selectionnerReponse(i),
             ),
           ),
         );
       }),
+    );
+  }
+}
+
+/// Compte à rebours avant le passage automatique à la question suivante.
+/// Isolé pour ne reconstruire que ce petit texte à chaque tic (1 seconde),
+/// pas le reste de l'écran.
+class _QuizMinuteur extends StatelessWidget {
+  const _QuizMinuteur();
+
+  @override
+  Widget build(BuildContext context) {
+    final quiz = context.watch<QuizProvider>();
+    if (quiz.reponseValidee) return const SizedBox.shrink();
+
+    final secondes = quiz.secondesRestantes;
+    final minutes = secondes ~/ 60;
+    final reste = secondes % 60;
+    return Text(
+      'Question suivante dans ${minutes}m${reste.toString().padLeft(2, '0')}s',
+      style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
     );
   }
 }

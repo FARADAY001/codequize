@@ -48,7 +48,7 @@ class DatabaseService {
 
   Future<Database> _initialiser() async {
     final chemin = p.join(await getDatabasesPath(), nomFichierPourTests);
-    return openDatabase(
+    final db = await openDatabase(
       chemin,
       version: 1,
       onCreate: (db, version) async {
@@ -96,15 +96,29 @@ class DatabaseService {
             type TEXT NOT NULL
           )
         ''');
-
-        // Pré-remplissage (seed) de la banque de questions au premier lancement.
-        final batch = db.batch();
-        for (final question in QuestionsData.questions) {
-          batch.insert('questions', question.versMap());
-        }
-        await batch.commit(noResult: true);
       },
     );
+
+    await _preremplirQuestions(db);
+    return db;
+  }
+
+  /// Pré-remplit la table `questions` avec toute la banque de référence
+  /// ([QuestionsData.questions]) qui n'y est pas déjà (comparaison par id,
+  /// conflit ignoré). Appelée à chaque ouverture de la base, pas seulement
+  /// à sa création : ainsi, une base déjà existante (installation mise à
+  /// jour) reçoit aussi les questions ajoutées depuis, sans réinitialiser
+  /// les données de l'utilisateur (tentatives, badges, série).
+  Future<void> _preremplirQuestions(Database db) async {
+    final batch = db.batch();
+    for (final question in QuestionsData.questions) {
+      batch.insert(
+        'questions',
+        question.versMap(),
+        conflictAlgorithm: ConflictAlgorithm.ignore,
+      );
+    }
+    await batch.commit(noResult: true);
   }
 
   // ---------------------------------------------------------- Utilisateurs
