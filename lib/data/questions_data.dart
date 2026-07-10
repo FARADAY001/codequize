@@ -13,6 +13,7 @@ class QuestionsData {
     Langage(id: 'dart', nom: 'Dart', icone: '🎯'),
     Langage(id: 'python', nom: 'Python', icone: '🐍'),
     Langage(id: 'javascript', nom: 'JavaScript', icone: '🟨'),
+    Langage(id: 'java', nom: 'Java', icone: '☕'),
   ];
 
   static const List<Question> questions = [
@@ -525,11 +526,8 @@ class QuestionsData {
       explication: "bool est le type représentant les valeurs booléennes True et False en Python.",
     ),
 
-    // ---------------------------------------------------------------------
-    // Complément : porte chaque combinaison langage x niveau à 10 questions.
-    // ---------------------------------------------------------------------
-
-    // Dart / Débutant (complément)
+    
+    // Dart / Débutant 
     Question(
       id: 'q45',
       langageId: 'dart',
@@ -572,7 +570,7 @@ class QuestionsData {
       explication: "// démarre un commentaire d'une seule ligne en Dart.",
     ),
 
-    // Dart / Intermédiaire (complément)
+    // Dart / Intermédiaire 
     Question(
       id: 'q49',
       langageId: 'dart',
@@ -739,7 +737,7 @@ class QuestionsData {
       explication: "Comme pour du code synchrone, try/catch autour d'un await intercepte l'exception si le Future se termine en erreur.",
     ),
 
-    // Python / Débutant (complément)
+    // Python / Débutant 
     Question(
       id: 'q61',
       langageId: 'python',
@@ -768,7 +766,7 @@ class QuestionsData {
       explication: "Le mot-clé import charge un module en Python, ici import math.",
     ),
 
-    // Python / Intermédiaire (complément)
+    // Python / Intermédiaire
     Question(
       id: 'q64',
       langageId: 'python',
@@ -840,7 +838,7 @@ class QuestionsData {
       explication: "with s'appuie sur le protocole de gestion de contexte (__enter__/__exit__) pour garantir qu'une ressource est proprement initialisée puis libérée.",
     ),
 
-    // Python / Expert (complément)
+    // Python / Expert 
     Question(
       id: 'q69',
       langageId: 'python',
@@ -907,7 +905,7 @@ class QuestionsData {
       explication: "append() a une complexité amortie de O(1) grâce à la stratégie de sur-allocation utilisée par les listes Python.",
     ),
 
-    // JavaScript / Débutant (complément)
+    // JavaScript / Débutant 
     Question(
       id: 'q74',
       langageId: 'javascript',
@@ -954,7 +952,7 @@ class QuestionsData {
       explication: "L'opérateur + concatène deux chaînes de caractères en JavaScript.",
     ),
 
-    // JavaScript / Intermédiaire (complément)
+    // JavaScript / Intermédiaire
     Question(
       id: 'q79',
       langageId: 'javascript',
@@ -1040,7 +1038,7 @@ class QuestionsData {
       explication: "Un template literal permet l'interpolation d'expressions directement dans une chaîne, en plus de faciliter les chaînes multi-lignes.",
     ),
 
-    // JavaScript / Expert (complément)
+    // JavaScript / Expert 
     Question(
       id: 'q85',
       langageId: 'javascript',
@@ -1125,10 +1123,396 @@ class QuestionsData {
       bonneReponseIndex: 0,
       explication: "Un générateur retourne un itérateur ; chaque appel à .next() reprend l'exécution jusqu'au prochain yield, ce qui permet de produire des valeurs à la demande.",
     ),
+
+    // Java / Débutant
+    Question(
+      id: 'q91',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Quelle signature est le point d'entrée d'un programme Java ?",
+      propositions: [
+        'public static void main(String[] args)',
+        'def main():',
+        'function main()',
+        'start()',
+      ],
+      bonneReponseIndex: 0,
+      explication: "Toute application Java démarre par l'exécution de la méthode public static void main(String[] args).",
+    ),
+    Question(
+      id: 'q92',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Quel mot-clé permet de déclarer une classe en Java ?",
+      propositions: ['class', 'struct', 'def', 'object'],
+      bonneReponseIndex: 0,
+      explication: "class introduit la définition d'une classe en Java.",
+    ),
+    Question(
+      id: 'q93',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Quel est le type primitif représentant un nombre entier en Java ?",
+      propositions: ['int', 'Integer', 'String', 'boolean'],
+      bonneReponseIndex: 0,
+      explication: "int est le type primitif dédié aux nombres entiers ; Integer est sa classe wrapper associée.",
+    ),
+    Question(
+      id: 'q94',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Quel symbole termine chaque instruction en Java ?",
+      propositions: [';', ':', '.', ','],
+      bonneReponseIndex: 0,
+      explication: "Chaque instruction Java se termine par un point-virgule.",
+    ),
+    Question(
+      id: 'q95',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Quelle instruction affiche du texte dans la console en Java ?",
+      propositions: ['System.out.println()', 'print()', 'console.log()', 'echo()'],
+      bonneReponseIndex: 0,
+      explication: "System.out.println() affiche un message suivi d'un retour à la ligne dans la console.",
+    ),
+    Question(
+      id: 'q96',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Quel mot-clé permet de créer une nouvelle instance d'une classe en Java ?",
+      propositions: ['new', 'create', 'init', 'make'],
+      bonneReponseIndex: 0,
+      explication: "new alloue et initialise une nouvelle instance d'une classe en Java.",
+    ),
+    Question(
+      id: 'q97',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Quel symbole introduit un commentaire sur une seule ligne en Java ?",
+      propositions: ['//', '#', '--', '<!-- -->'],
+      bonneReponseIndex: 0,
+      explication: "// démarre un commentaire d'une seule ligne en Java.",
+    ),
+    Question(
+      id: 'q98',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Quel type primitif Java représente une valeur vraie ou fausse ?",
+      propositions: ['boolean', 'bool', 'bit', 'flag'],
+      bonneReponseIndex: 0,
+      explication: "boolean est le type primitif représentant les valeurs true et false en Java.",
+    ),
+    Question(
+      id: 'q99',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Comment déclare-t-on une constante en Java ?",
+      propositions: [
+        'Avec le mot-clé final',
+        'Avec le mot-clé const',
+        'Avec le mot-clé static uniquement',
+        'Avec le mot-clé let',
+      ],
+      bonneReponseIndex: 0,
+      explication: "final empêche la réassignation d'une variable après son initialisation, ce qui en fait une constante.",
+    ),
+    Question(
+      id: 'q100',
+      langageId: 'java',
+      niveau: NiveauType.debutant,
+      enonce: "Quelle extension de fichier est utilisée pour le code source Java ?",
+      propositions: ['.java', '.jav', '.jv', '.js'],
+      bonneReponseIndex: 0,
+      explication: "Les fichiers source Java utilisent l'extension .java.",
+    ),
+
+    // Java / Intermédiaire
+    Question(
+      id: 'q101',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Que permet une interface en Java ?",
+      propositions: [
+        "Définir un contrat de méthodes que les classes implémentantes doivent respecter",
+        "Créer une instance concrète directement",
+        "Remplacer les classes abstraites",
+        "Empêcher tout héritage",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Une interface déclare des méthodes (sans implémentation, en général) que toute classe l'implémentant s'engage à fournir.",
+    ),
+    Question(
+      id: 'q102',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Que fait le mot-clé `extends` en Java ?",
+      propositions: [
+        "Il permet à une classe d'hériter d'une autre classe",
+        "Il implémente une interface",
+        "Il déclare une méthode statique",
+        "Il crée une exception",
+      ],
+      bonneReponseIndex: 0,
+      explication: "extends établit une relation d'héritage entre une sous-classe et sa classe parente.",
+    ),
+    Question(
+      id: 'q103',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Que fait le mot-clé `implements` en Java ?",
+      propositions: [
+        "Il permet à une classe de mettre en œuvre une ou plusieurs interfaces",
+        "Il permet l'héritage multiple de classes",
+        "Il déclare une variable finale",
+        "Il importe un package",
+      ],
+      bonneReponseIndex: 0,
+      explication: "implements indique qu'une classe fournit une implémentation concrète des méthodes d'une ou plusieurs interfaces.",
+    ),
+    Question(
+      id: 'q104',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Quelle est la différence entre `ArrayList` et un tableau classique en Java ?",
+      propositions: [
+        "ArrayList peut changer de taille dynamiquement, un tableau a une taille fixe",
+        "Un tableau peut changer de taille, pas ArrayList",
+        "Aucune différence",
+        "ArrayList ne peut contenir que des String",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Un tableau Java a une taille fixée à la création, tandis qu'ArrayList redimensionne automatiquement sa capacité interne.",
+    ),
+    Question(
+      id: 'q105',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Que fait un bloc `try`/`catch` en Java ?",
+      propositions: [
+        "Il capture et gère les exceptions levées dans le bloc try",
+        "Il empêche toute exécution du code",
+        "Il remplace les boucles",
+        "Il déclare une classe abstraite",
+      ],
+      bonneReponseIndex: 0,
+      explication: "try/catch permet d'intercepter une exception levée dans le bloc try et de la traiter dans le bloc catch correspondant.",
+    ),
+    Question(
+      id: 'q106',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Que représente l'autoboxing en Java ?",
+      propositions: [
+        "La conversion automatique entre un type primitif et sa classe wrapper (ex : int vers Integer)",
+        "La compression automatique du bytecode",
+        "Le passage automatique de paramètres par référence",
+        "La création automatique de threads",
+      ],
+      bonneReponseIndex: 0,
+      explication: "L'autoboxing convertit automatiquement un type primitif (int, boolean...) en son équivalent objet (Integer, Boolean...), et inversement (unboxing).",
+    ),
+    Question(
+      id: 'q107',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Que fait le mot-clé `static` appliqué à une méthode en Java ?",
+      propositions: [
+        "Elle appartient à la classe elle-même, pas à une instance particulière",
+        "Elle ne peut être appelée qu'une seule fois",
+        "Elle devient privée automatiquement",
+        "Elle s'exécute dans un thread séparé",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Une méthode static est liée à la classe et peut être appelée sans créer d'instance.",
+    ),
+    Question(
+      id: 'q108',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Que fait la généricité, par exemple `List<String>`, en Java ?",
+      propositions: [
+        "Elle garantit à la compilation le type des éléments contenus dans la collection",
+        "Elle rend la liste immuable",
+        "Elle trie automatiquement les éléments",
+        "Elle limite la liste à 10 éléments",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Les génériques permettent au compilateur de vérifier et garantir le type des éléments manipulés, évitant des erreurs de cast à l'exécution.",
+    ),
+    Question(
+      id: 'q109',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Quelle est la particularité d'une classe abstraite en Java ?",
+      propositions: [
+        "Elle ne peut pas être instanciée directement et peut contenir des méthodes non implémentées",
+        "Elle ne peut avoir aucune méthode",
+        "Elle est toujours finale",
+        "Elle remplace complètement les interfaces",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Une classe abstraite sert de base commune : elle ne peut être instanciée seule et peut laisser certaines méthodes à implémenter par ses sous-classes.",
+    ),
+    Question(
+      id: 'q110',
+      langageId: 'java',
+      niveau: NiveauType.intermediaire,
+      enonce: "Que fait l'opérateur `instanceof` en Java ?",
+      propositions: [
+        "Il vérifie si un objet est une instance d'un type donné",
+        "Il crée une nouvelle instance",
+        "Il compare deux objets par valeur",
+        "Il convertit un objet en chaîne",
+      ],
+      bonneReponseIndex: 0,
+      explication: "instanceof teste, à l'exécution, si un objet est bien une instance du type (ou sous-type) spécifié.",
+    ),
+
+    // Java / Expert
+    Question(
+      id: 'q111',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Que représente la JVM (Java Virtual Machine) ?",
+      propositions: [
+        "Une machine virtuelle qui exécute le bytecode Java indépendamment du système d'exploitation",
+        "Un compilateur qui transforme le Java en C++",
+        "Un serveur web intégré à Java",
+        "Un outil de test unitaire",
+      ],
+      bonneReponseIndex: 0,
+      explication: "La JVM interprète (ou compile à la volée) le bytecode Java, ce qui rend un même programme portable sur toute plateforme disposant d'une JVM.",
+    ),
+    Question(
+      id: 'q112',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Que fait le Garbage Collector en Java ?",
+      propositions: [
+        "Il libère automatiquement la mémoire des objets qui ne sont plus référencés",
+        "Il compile le code source en bytecode",
+        "Il gère les threads du programme",
+        "Il optimise les requêtes réseau",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Le ramasse-miettes (Garbage Collector) détecte les objets devenus inaccessibles et libère automatiquement la mémoire associée.",
+    ),
+    Question(
+      id: 'q113',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Que garantit le mot-clé `synchronized` en Java ?",
+      propositions: [
+        "Qu'un seul thread à la fois peut exécuter le bloc ou la méthode concernée",
+        "Que le code s'exécute plus vite",
+        "Que la méthode devient statique",
+        "Que la classe ne peut pas être héritée",
+      ],
+      bonneReponseIndex: 0,
+      explication: "synchronized garantit un accès exclusif au bloc ou à la méthode, un seul thread à la fois pouvant l'exécuter sur un même verrou.",
+    ),
+    Question(
+      id: 'q114',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Que fait une classe qui implémente `Comparable<T>` en Java ?",
+      propositions: [
+        "Elle définit un ordre naturel entre ses instances via la méthode compareTo",
+        "Elle devient automatiquement triable sans code supplémentaire",
+        "Elle interdit toute comparaison entre instances",
+        "Elle remplace la méthode equals",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Comparable<T> impose l'implémentation de compareTo(T autre), qui définit l'ordre naturel utilisé notamment par les tris standards.",
+    ),
+    Question(
+      id: 'q115',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Quelle est la différence entre `==` et `.equals()` pour comparer des objets en Java ?",
+      propositions: [
+        "== compare les références mémoire, .equals() compare le contenu logique (selon son implémentation)",
+        "Les deux comparent toujours le contenu",
+        "== compare le contenu, .equals() les références",
+        "Il n'y a aucune différence pour les objets",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Par défaut == teste l'identité (même référence mémoire), tandis que .equals() peut être redéfinie pour comparer le contenu logique des objets.",
+    ),
+    Question(
+      id: 'q116',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Que permet un flux (`Stream`) de l'API Stream de Java 8+ ?",
+      propositions: [
+        "Traiter des collections de façon déclarative (map, filter, reduce...) sans boucles explicites",
+        "Ouvrir des connexions réseau",
+        "Remplacer complètement les threads",
+        "Gérer uniquement les fichiers",
+      ],
+      bonneReponseIndex: 0,
+      explication: "L'API Stream permet d'enchaîner des opérations déclaratives (filter, map, reduce...) sur des collections, sans écrire de boucles explicites.",
+    ),
+    Question(
+      id: 'q117',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Que fait une expression lambda en Java, par exemple `(a, b) -> a + b` ?",
+      propositions: [
+        "Elle fournit une implémentation concise d'une interface fonctionnelle",
+        "Elle déclare une nouvelle classe",
+        "Elle crée un thread automatiquement",
+        "Elle remplace le mot-clé static",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Une expression lambda est une implémentation compacte d'une interface fonctionnelle (une interface à une seule méthode abstraite).",
+    ),
+    Question(
+      id: 'q118',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Que représente le principe « write once, run anywhere » en Java ?",
+      propositions: [
+        "Le bytecode compilé s'exécute sur toute JVM, indépendamment de la plateforme",
+        "Le code source doit être réécrit pour chaque système d'exploitation",
+        "Java ne fonctionne que sur Windows",
+        "Le code ne peut être compilé qu'une seule fois dans sa vie",
+      ],
+      bonneReponseIndex: 0,
+      explication: "Grâce à la JVM, le même bytecode Java s'exécute sur n'importe quelle plateforme disposant d'une machine virtuelle compatible.",
+    ),
+    Question(
+      id: 'q119',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Que fait le mot-clé `volatile` appliqué à une variable en Java ?",
+      propositions: [
+        "Il garantit que sa valeur est toujours lue depuis la mémoire principale, visible par tous les threads",
+        "Il la rend constante",
+        "Il la supprime après un certain temps",
+        "Il l'empêche d'être sérialisée",
+      ],
+      bonneReponseIndex: 0,
+      explication: "volatile empêche la mise en cache locale de la variable par un thread, garantissant que sa valeur lue/écrite est toujours synchronisée avec la mémoire principale.",
+    ),
+    Question(
+      id: 'q120',
+      langageId: 'java',
+      niveau: NiveauType.expert,
+      enonce: "Que permet l'annotation `@Override` en Java ?",
+      propositions: [
+        "Indiquer explicitement qu'une méthode redéfinit une méthode de la classe parente (vérifié à la compilation)",
+        "Rendre une méthode statique",
+        "Empêcher l'héritage de la méthode",
+        "Créer automatiquement un test unitaire",
+      ],
+      bonneReponseIndex: 0,
+      explication: "@Override fait vérifier par le compilateur que la méthode annotée redéfinit bien une méthode existante de la classe parente ou de l'interface implémentée.",
+    ),
   ];
 
   /// Nom affichable d'un langage à partir de son id, ou l'id lui-même si
-  /// inconnu (ex. donnée orpheline après suppression d'un langage).
+  /// inconnu 
   static String nomLangage(String langageId) {
     final trouve = langages.where((l) => l.id == langageId);
     return trouve.isEmpty ? langageId : trouve.first.nom;

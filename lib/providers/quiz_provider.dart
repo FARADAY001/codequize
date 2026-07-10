@@ -11,14 +11,14 @@ import '../services/database_service.dart';
 import '../data/questions_data.dart';
 
 /// Durée avant que l'ordre des propositions ne soit re-mélangé.
-const _delaiMelange = Duration(seconds: 20);
+const _delaiMelange = Duration(seconds: 5);
 
 /// Durée totale avant le passage automatique à la question suivante.
-const _delaiPassageAuto = Duration(seconds: 60);
+const _delaiPassageAuto = Duration(seconds: 30);
 
 /// Gère l'état d'une session de QCM : sélection, progression, score,
 /// puis enregistrement du résultat (tentative + badge éventuel) en base.
-/// Gère également le mode « défi quotidien » (une question aléatoire).
+/// Gère également le mode « défi quotidien ».
 class QuizProvider extends ChangeNotifier {
   final DatabaseService _db = DatabaseService.instance;
 
@@ -62,14 +62,13 @@ class QuizProvider extends ChangeNotifier {
   }
 
   /// Propositions de la question courante, dans l'ordre d'affichage
-  /// mélangé (voir [_melangerPropositions]).
   List<String> get propositionsAffichees {
     final question = questionCourante;
     if (question == null) return const [];
     return _ordreAffichage.map((i) => question.propositions[i]).toList();
   }
 
-  /// Indique si la proposition affichée à [indexAffiche] est la bonne
+  /// Indique si la proposition affichée est la bonne
   /// réponse, en tenant compte du mélange courant.
   bool estPositionBonneReponse(int indexAffiche) {
     final question = questionCourante;
@@ -78,7 +77,7 @@ class QuizProvider extends ChangeNotifier {
   }
 
   /// Secondes restantes avant le passage automatique à la question
-  /// suivante (voir [_delaiPassageAuto]).
+  /// suivante.
   int get secondesRestantes =>
       (_delaiPassageAuto.inSeconds - _secondesEcoulees).clamp(0, _delaiPassageAuto.inSeconds);
 
@@ -117,8 +116,7 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Démarre le défi quotidien : une unique question aléatoire, tous
-  /// langages et niveaux confondus.
+  /// Démarre le défi quotidien 
   Future<void> demarrerDefiQuotidien() async {
     _estDefiQuotidien = true;
     _chargementEnCours = true;
@@ -151,9 +149,7 @@ class QuizProvider extends ChangeNotifier {
   }
 
   /// (Ré)initialise le mélange des propositions et le minuteur de la
-  /// question courante : les positions sont re-mélangées toutes les
-  /// [_delaiMelange], et la question est automatiquement passée après
-  /// [_delaiPassageAuto] si elle n'a pas été validée entre-temps.
+  /// question courante.
   void _demarrerQuestion() {
     _melangerPropositions();
     _secondesEcoulees = 0;
@@ -187,9 +183,8 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Passage forcé à la question suivante quand le délai de
-  /// [_delaiPassageAuto] est écoulé sans validation : équivalent à une
-  /// non-réponse (pas de point marqué), comme [questionSuivante].
+  /// Passage forcé à la question suivante quand le délai est écoulé sans validation : équivalent à une
+  /// non-réponse (pas de point marqué).
   void _passerQuestionAutomatiquement() {
     _minuteur?.cancel();
     _indexCourant++;
@@ -228,9 +223,9 @@ class QuizProvider extends ChangeNotifier {
     }
   }
 
-  /// Enregistre la tentative terminée pour `utilisateurId` et attribue
+  /// Enregistre la tentative terminée et attribue
   /// un badge si le seuil du niveau est atteint et qu'il n'était pas déjà
-  /// obtenu. Ne fait rien si déjà appelé pour cette session.
+  /// obtenu.
   Future<void> enregistrerResultat(String utilisateurId) async {
     if (_resultatEnregistre || _langageSelectionne == null || _niveauSelectionne == null) {
       return;

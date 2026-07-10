@@ -5,6 +5,7 @@ import '../models/tentative.dart';
 import '../data/questions_data.dart';
 import '../providers/auth_provider.dart';
 import '../services/database_service.dart';
+import '../theme/app_theme.dart';
 
 /// Tableau de bord de progression : évolution du score dans le temps
 /// pour un langage donné, avec sélecteur de langage et transition Hero
@@ -35,9 +36,7 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
   }
 
   /// Recharge les tentatives uniquement si le langage ou l'utilisateur a
-  /// changé, plutôt qu'à chaque rebuild du widget (voir dossier de
-  /// conception technique, section 8 : observation des rebuilds inutiles
-  /// avec DevTools).
+  /// changé, plutôt qu'à chaque rebuild du widget.
   void _chargerTentativesSiNecessaire(String utilisateurId) {
     if (_futureTentatives != null && _utilisateurIdCharge == '$utilisateurId-$_langageSelectionneId') {
       return;
@@ -58,10 +57,12 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
       _chargerTentativesSiNecessaire(utilisateurId);
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: Text('Statistiques — ${_nomLangage(_langageSelectionneId)}')),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -70,7 +71,7 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                 tag: 'langage-${widget.langageIdInitial}',
                 child: CircleAvatar(
                   radius: 32,
-                  backgroundColor: Colors.indigo.shade50,
+                  backgroundColor: colorScheme.primaryContainer,
                   child: Text(
                     QuestionsData.langages
                         .firstWhere((l) => l.id == widget.langageIdInitial, orElse: () => QuestionsData.langages.first)
@@ -80,7 +81,7 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             // Sélecteur de langage (chips)
             SizedBox(
               height: 44,
@@ -89,7 +90,7 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                 children: QuestionsData.langages.map((langage) {
                   final selectionne = langage.id == _langageSelectionneId;
                   return Padding(
-                    padding: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.only(right: AppSpacing.sm),
                     child: ChoiceChip(
                       label: Text(langage.nom),
                       selected: selectionne,
@@ -101,7 +102,7 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                 }).toList(),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.lg),
             Expanded(
               child: utilisateurId == null
                   ? const SizedBox.shrink()
@@ -120,10 +121,20 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
 
                         if (tentatives.isEmpty) {
                           return Center(
-                            child: Text(
-                              "Pas encore de tentative en ${_nomLangage(_langageSelectionneId)}.",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.grey),
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppSpacing.lg),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.bar_chart, size: 56, color: colorScheme.onSurfaceVariant),
+                                  const SizedBox(height: AppSpacing.md),
+                                  Text(
+                                    "Pas encore de tentative en ${_nomLangage(_langageSelectionneId)}.",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: colorScheme.onSurfaceVariant),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         }
@@ -174,12 +185,12 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                                       lineBarsData: [
                                         LineChartBarData(
                                           isCurved: true,
-                                          color: Colors.indigo,
+                                          color: colorScheme.primary,
                                           barWidth: 3,
                                           dotData: const FlDotData(show: true),
                                           belowBarData: BarAreaData(
                                             show: true,
-                                            color: Colors.indigo.withValues(alpha: 0.1),
+                                            color: colorScheme.primary.withValues(alpha: 0.1),
                                           ),
                                           spots: List.generate(tentatives.length, (i) {
                                             return FlSpot(
@@ -194,18 +205,30 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
                                 },
                               ),
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: AppSpacing.md),
                             Card(
                               child: Padding(
-                                padding: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(AppSpacing.md),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text('Meilleur score : $meilleurScore %'),
-                                    const SizedBox(height: 6),
-                                    Text('Série actuelle (défi quotidien) : $serieActuelle jour(s)'),
-                                    const SizedBox(height: 6),
-                                    Text('${tentatives.length} tentative(s) enregistrée(s)'),
+                                    _LigneStatistique(
+                                      icone: Icons.emoji_events_outlined,
+                                      couleur: Colors.amber.shade700,
+                                      texte: 'Meilleur score : $meilleurScore %',
+                                    ),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    _LigneStatistique(
+                                      icone: Icons.local_fire_department,
+                                      couleur: Colors.deepOrange,
+                                      texte: 'Série actuelle (défi quotidien) : $serieActuelle jour(s)',
+                                    ),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    _LigneStatistique(
+                                      icone: Icons.checklist_rtl,
+                                      couleur: colorScheme.primary,
+                                      texte: '${tentatives.length} tentative(s) enregistrée(s)',
+                                    ),
                                   ],
                                 ),
                               ),
@@ -218,6 +241,32 @@ class _StatistiquesScreenState extends State<StatistiquesScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Une ligne icône + texte de la carte récapitulative (meilleur score,
+/// série, nombre de tentatives), pour un repère visuel plus rapide qu'un
+/// simple bloc de texte.
+class _LigneStatistique extends StatelessWidget {
+  final IconData icone;
+  final Color couleur;
+  final String texte;
+
+  const _LigneStatistique({
+    required this.icone,
+    required this.couleur,
+    required this.texte,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icone, size: 20, color: couleur),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(child: Text(texte)),
+      ],
     );
   }
 }

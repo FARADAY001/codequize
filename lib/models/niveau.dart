@@ -19,8 +19,6 @@ class Niveau {
   ];
 }
 
-/// Libellé affichable d'un [NiveauType], dérivé de [Niveau.tous] pour éviter
-/// de dupliquer les intitulés (Débutant/Intermédiaire/Expert) dans chaque
 /// écran qui affiche un niveau.
 extension NiveauTypeLibelle on NiveauType {
   String get libelle => Niveau.tous.firstWhere((n) => n.type == this).nom;

@@ -1,6 +1,6 @@
 import 'niveau.dart';
 
-/// Type de badge : lié à une compétence (score) ou à une série (streak).
+/// Type de badge : lié à une compétence (score) ou à une série.
 enum TypeBadge { competence, serie }
 
 /// Un badge de compétence débloqué par l'utilisateur.

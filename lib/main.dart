@@ -4,6 +4,7 @@ import 'providers/quiz_provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/connexion_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const CodeQuizApp());
@@ -22,10 +23,9 @@ class CodeQuizApp extends StatelessWidget {
       child: MaterialApp(
         title: 'CodeQuiz',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorSchemeSeed: Colors.indigo,
-          useMaterial3: true,
-        ),
+        theme: AppTheme.clair,
+        darkTheme: AppTheme.sombre,
+        themeMode: ThemeMode.system,
         home: const AuthGate(),
       ),
     );

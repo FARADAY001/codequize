@@ -6,9 +6,9 @@ import '../providers/auth_provider.dart';
 import '../services/database_service.dart';
 import '../services/certificate_service.dart';
 import '../data/questions_data.dart';
+import '../theme/app_theme.dart';
 import 'statistiques_screen.dart';
 
-/// Écran de profil et badges, alimenté par la base sqflite locale :
 /// seuls les badges de l'utilisateur connecté sont affichés. Permet
 /// aussi de partager un certificat et d'ouvrir le tableau de bord de
 /// progression (Statistiques) pour un langage donné.
@@ -52,33 +52,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final utilisateurId = context.read<AuthProvider>().utilisateurCourant?.id;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profil et badges')),
       body: utilisateurId == null
           ? const SizedBox.shrink()
           : SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Statistiques par langage',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 4),
                   Text(
                     'Appuie sur un langage pour voir ta progression.',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                    style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   SizedBox(
                     height: 96,
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: QuestionsData.langages.map((langage) {
                         return Padding(
-                          padding: const EdgeInsets.only(right: 16),
+                          padding: const EdgeInsets.only(right: AppSpacing.md),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).push(
@@ -93,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   tag: 'langage-${langage.id}',
                                   child: CircleAvatar(
                                     radius: 28,
-                                    backgroundColor: Colors.indigo.shade50,
+                                    backgroundColor: colorScheme.primaryContainer,
                                     child: Text(langage.icone, style: const TextStyle(fontSize: 22)),
                                   ),
                                 ),
@@ -106,12 +108,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }).toList(),
                     ),
                   ),
-                  const Divider(height: 32),
-                  const Text(
+                  const Divider(),
+                  Text(
                     'Mes badges',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.sm),
                   FutureBuilder<List<BadgeModel>>(
                     future: _futureBadges,
                     builder: (context, snapshot) {
@@ -124,12 +126,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       final badges = snapshot.data ?? [];
                       if (badges.isEmpty) {
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 24),
-                          child: Text(
-                            "Aucun badge débloqué pour le moment.\n"
-                            "Réussis un test pour commencer à en gagner !",
-                            textAlign: TextAlign.center,
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+                          child: Column(
+                            children: [
+                              Icon(Icons.emoji_events_outlined, size: 48, color: colorScheme.onSurfaceVariant),
+                              const SizedBox(height: AppSpacing.sm),
+                              Text(
+                                "Aucun badge débloqué pour le moment.\n"
+                                "Réussis un test pour commencer à en gagner !",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(color: colorScheme.onSurfaceVariant),
+                              ),
+                            ],
                           ),
                         );
                       }
@@ -138,29 +147,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: badges.map((badge) {
                           final estSerie = badge.type == TypeBadge.serie;
                           final enCours = _partageEnCoursBadgeId == badge.id;
-                          return Card(
-                            child: ListTile(
-                              leading: Icon(
-                                estSerie ? Icons.local_fire_department : Icons.emoji_events,
-                                color: estSerie ? Colors.deepOrange : Colors.amber,
+                          final couleur = estSerie ? Colors.deepOrange : Colors.amber;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                            child: Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: couleur.withValues(alpha: 0.15),
+                                  child: Icon(
+                                    estSerie ? Icons.local_fire_department : Icons.emoji_events,
+                                    color: couleur,
+                                  ),
+                                ),
+                                title: Text(
+                                  estSerie ? 'Série de 7 jours' : QuestionsData.nomLangage(badge.langageId),
+                                  style: const TextStyle(fontWeight: FontWeight.w600),
+                                ),
+                                subtitle: Text(estSerie ? 'Défi quotidien' : badge.niveau.libelle),
+                                trailing: estSerie
+                                    ? null
+                                    : IconButton(
+                                        icon: enCours
+                                            ? const SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                                child: CircularProgressIndicator(strokeWidth: 2),
+                                              )
+                                            : const Icon(Icons.share),
+                                        tooltip: 'Partager mon certificat',
+                                        onPressed: enCours ? null : () => _partagerCertificat(badge),
+                                      ),
                               ),
-                              title: Text(
-                                estSerie ? 'Série de 7 jours' : QuestionsData.nomLangage(badge.langageId),
-                              ),
-                              subtitle: Text(estSerie ? 'Défi quotidien' : badge.niveau.libelle),
-                              trailing: estSerie
-                                  ? null
-                                  : IconButton(
-                                      icon: enCours
-                                          ? const SizedBox(
-                                              width: 16,
-                                              height: 16,
-                                              child: CircularProgressIndicator(strokeWidth: 2),
-                                            )
-                                          : const Icon(Icons.share),
-                                      tooltip: 'Partager mon certificat',
-                                      onPressed: enCours ? null : () => _partagerCertificat(badge),
-                                    ),
                             ),
                           );
                         }).toList(),

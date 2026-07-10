@@ -10,9 +10,6 @@ import '../services/database_service.dart';
 ///
 /// Les comptes sont désormais persistés dans la base sqflite locale via
 /// DatabaseService.
-/// L'interface publique (inscrire/connecter/deconnecter) reste identique
-/// à la version en mémoire de l'étape précédente : aucun écran n'a besoin
-/// d'être restructuré, seuls les appels deviennent asynchrones.
 class AuthProvider extends ChangeNotifier {
   final DatabaseService _db = DatabaseService.instance;
 
@@ -148,8 +145,6 @@ class AuthProvider extends ChangeNotifier {
     _utilisateurCourant = utilisateurMisAJour;
 
     // Badge spécial "série" débloqué tous les 7 jours consécutifs.
-    // Non rattaché à un langage ni un niveau précis : on utilise des
-    // valeurs de référence fixes ('global' / debutant).
     if (nouvelleSerie % 7 == 0) {
       final badge = BadgeModel(
         id: '${DateTime.now().microsecondsSinceEpoch}_serie',

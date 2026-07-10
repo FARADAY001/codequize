@@ -5,14 +5,12 @@ import '../models/niveau.dart';
 import '../providers/auth_provider.dart';
 import '../services/database_service.dart';
 import '../data/questions_data.dart';
+import '../theme/app_theme.dart';
+import '../theme/niveau_style.dart';
 
 /// Écran d'historique des tentatives, alimenté par la base sqflite locale :
 /// seules les tentatives de l'utilisateur connecté sont affichées.
-///
-/// StatefulWidget avec Future mis en cache dans initState() plutôt que
-/// StatelessWidget interrogeant la base à chaque build() : l'identifiant
-/// de l'utilisateur ne change pas pendant que cet écran est ouvert, donc
-/// une seule requête suffit.
+
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
 
@@ -40,6 +38,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Historique')),
       body: FutureBuilder<List<Tentative>>(
@@ -51,33 +51,50 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
           final tentatives = snapshot.data ?? [];
           if (tentatives.isEmpty) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(24),
-                child: Text(
-                  "Aucune tentative enregistrée pour le moment.\n"
-                  "Lance un test depuis l'accueil pour commencer !",
-                  textAlign: TextAlign.center,
+                padding: const EdgeInsets.all(AppSpacing.lg),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.history, size: 56, color: colorScheme.onSurfaceVariant),
+                    const SizedBox(height: AppSpacing.md),
+                    Text(
+                      "Aucune tentative enregistrée pour le moment.\n"
+                      "Lance un test depuis l'accueil pour commencer !",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    ),
+                  ],
                 ),
               ),
             );
           }
 
           return ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.md),
             itemCount: tentatives.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
             itemBuilder: (context, i) {
               final t = tentatives[i];
+              final couleur = t.niveau.couleur;
               return Card(
                 child: ListTile(
-                  title: Text('${QuestionsData.nomLangage(t.langageId)} — ${t.niveau.libelle}'),
+                  leading: CircleAvatar(
+                    backgroundColor: couleur.withValues(alpha: 0.15),
+                    child: Icon(t.niveau.icone, color: couleur, size: 20),
+                  ),
+                  title: Text(
+                    '${QuestionsData.nomLangage(t.langageId)} — ${t.niveau.libelle}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   subtitle: Text(_formaterDate(t.date)),
                   trailing: Text(
-                    '${t.score} %',
-                    style: const TextStyle(
+                    '${t.score}%',
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: t.score >= 70 ? Colors.green : colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),

@@ -8,8 +8,7 @@ import 'package:share_plus/share_plus.dart';
 /// applications installées sur l'appareil.
 ///
 /// Le fichier est généré à la volée dans le répertoire temporaire de
-/// l'application : il n'est pas conservé en base (voir dossier de
-/// conception technique, section 3.3).
+/// l'application : il n'est pas conservé en base.
 class CertificateService {
   static Future<void> genererEtPartager({
     required String nomUtilisateur,

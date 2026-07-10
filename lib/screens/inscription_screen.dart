@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../theme/app_theme.dart';
 
 class InscriptionScreen extends StatefulWidget {
   const InscriptionScreen({super.key});
@@ -14,6 +15,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
   final _motDePasseController = TextEditingController();
   final _confirmationController = TextEditingController();
   String? _erreurLocale;
+  bool _motDePasseVisible = false;
 
   @override
   void dispose() {
@@ -37,7 +39,7 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
       _nomController.text,
       _motDePasseController.text,
     );
-    
+
     if (succes && context.mounted) {
       Navigator.of(context).pop();
     }
@@ -48,52 +50,86 @@ class _InscriptionScreenState extends State<InscriptionScreen> {
     final auth = context.watch<AuthProvider>();
     final erreurAffichee = _erreurLocale ?? auth.erreur;
     final enCours = auth.enCours;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Créer un compte')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Text(
+              'Rejoins CodeQuiz',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Crée ton compte pour suivre ta progression',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+            ),
+            const SizedBox(height: AppSpacing.xl),
             TextField(
               controller: _nomController,
+              textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 labelText: "Nom d'utilisateur",
-                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person_outline),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             TextField(
               controller: _motDePasseController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: !_motDePasseVisible,
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(
                 labelText: 'Mot de passe',
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  icon: Icon(_motDePasseVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                  onPressed: () => setState(() => _motDePasseVisible = !_motDePasseVisible),
+                ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             TextField(
               controller: _confirmationController,
-              obscureText: true,
+              obscureText: !_motDePasseVisible,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => enCours ? null : _creerCompte(context),
               decoration: const InputDecoration(
                 labelText: 'Confirmer le mot de passe',
-                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock_outline),
               ),
             ),
             if (erreurAffichee != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                erreurAffichee,
-                style: const TextStyle(color: Colors.red),
-                textAlign: TextAlign.center,
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline, color: colorScheme.onErrorContainer, size: 20),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        erreurAffichee,
+                        style: TextStyle(color: colorScheme.onErrorContainer),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             ElevatedButton(
               onPressed: enCours ? null : () => _creerCompte(context),
-              style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
               child: enCours
                   ? const SizedBox(
                       width: 20,

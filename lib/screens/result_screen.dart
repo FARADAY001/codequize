@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/quiz_provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/certificate_service.dart';
+import '../theme/app_theme.dart';
+import '../theme/niveau_style.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key});
@@ -42,33 +44,78 @@ class _ResultScreenState extends State<ResultScreen> {
     final score = quiz.scorePourcentage;
     final niveau = quiz.niveauSelectionne;
     final badgeObtenu = niveau != null && score >= niveau.seuilBadge;
+    final colorScheme = Theme.of(context).colorScheme;
+    final couleurScore = badgeObtenu ? Colors.green : (niveau?.type.couleur ?? colorScheme.primary);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Résultat')),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(
-                '$score %',
-                style: const TextStyle(fontSize: 56, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '${quiz.langageSelectionne?.nom} — ${niveau?.nom}',
-                style: const TextStyle(fontSize: 18, color: Colors.grey),
-              ),
-              const SizedBox(height: 24),
-              if (badgeObtenu) ...[
-                const Icon(Icons.emoji_events, size: 64, color: Colors.amber),
-                const SizedBox(height: 8),
-                const Text(
-                  'Badge débloqué !',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              SizedBox(
+                width: 180,
+                height: 180,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 180,
+                      height: 180,
+                      child: CircularProgressIndicator(
+                        value: score / 100,
+                        strokeWidth: 12,
+                        strokeCap: StrokeCap.round,
+                        backgroundColor: colorScheme.surfaceContainerHighest,
+                        valueColor: AlwaysStoppedAnimation(couleurScore),
+                      ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '$score%',
+                          style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: couleurScore,
+                              ),
+                        ),
+                        Text(
+                          badgeObtenu ? 'Réussi !' : 'Score',
+                          style: TextStyle(color: colorScheme.onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              Text(
+                '${quiz.langageSelectionne?.nom ?? ""} — ${niveau?.nom ?? ""}',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              if (badgeObtenu) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    children: [
+                      const Icon(Icons.emoji_events, size: 48, color: Colors.amber),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Badge débloqué !',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.md),
                 OutlinedButton.icon(
                   icon: _partageEnCours
                       ? const SizedBox(
@@ -78,11 +125,10 @@ class _ResultScreenState extends State<ResultScreen> {
                         )
                       : const Icon(Icons.share),
                   label: const Text('Partager mon certificat'),
-                  style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(46)),
                   onPressed: _partageEnCours ? null : () => _partagerCertificat(context),
                 ),
               ],
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.xl),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

@@ -9,19 +9,11 @@ import '../models/niveau.dart';
 import '../data/questions_data.dart';
 
 /// Point d'accès unique à la base de données locale (sqflite).
-///
-/// Aucun écran ni provider n'exécute de requête SQL directement :
-/// tout passe par ce service, conformément au dossier de conception
-/// technique (section 3.1).
 class DatabaseService {
   DatabaseService._interne();
   static final DatabaseService instance = DatabaseService._interne();
 
-  /// Nom du fichier de base de données. Ne jamais modifier en dehors des
-  /// tests automatisés : test_helpers/db_test_setup.dart lui attribue une
-  /// valeur unique par isolate de test, car `flutter test` exécute
-  /// plusieurs fichiers de test en parallèle et un nom fixe partagé
-  /// provoquerait des verrous SQLite concurrents (« database is locked »).
+  /// Nom du fichier de base de données.
   static String nomFichierPourTests = 'codequiz.db';
 
   Database? _db;
@@ -32,11 +24,7 @@ class DatabaseService {
     return _db!;
   }
 
-  /// Réservé aux tests : ferme la base courante et supprime le fichier,
-  /// afin que chaque test démarre avec une base vierge (utilisateurs et
-  /// tentatives, mais aussi la banque de questions, qui est re-semée à la
-  /// prochaine ouverture). Ne jamais appeler cette méthode en dehors des
-  /// tests automatisés.
+  /// Réservé aux tests 
   Future<void> reinitialiserPourTests() async {
     if (_db != null) {
       final chemin = _db!.path;

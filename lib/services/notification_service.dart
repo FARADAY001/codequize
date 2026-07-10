@@ -5,8 +5,7 @@ import 'package:timezone/timezone.dart' as tz;
 /// Gère la notification locale de rappel du défi quotidien.
 ///
 /// Fonctionnement hors ligne total : aucune dépendance à un serveur, la
-/// notification est planifiée localement sur l'appareil (voir dossier de
-/// conception technique, section 3.3).
+/// notification est planifiée localement sur l'appareil.
 class NotificationService {
   NotificationService._interne();
   static final NotificationService instance = NotificationService._interne();

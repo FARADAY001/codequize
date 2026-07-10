@@ -1,7 +1,7 @@
 /// Représente un compte utilisateur de CodeQuiz.
 ///
 /// Le mot de passe n'est jamais stocké en clair : seul son hash
-/// (SHA-256, voir AuthProvider) est conservé.
+/// (SHA-256) .
 class Utilisateur {
   final String id;
   final String nomUtilisateur;

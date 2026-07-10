@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../theme/app_theme.dart';
 import 'inscription_screen.dart';
 
 class ConnexionScreen extends StatefulWidget {
@@ -13,6 +14,7 @@ class ConnexionScreen extends StatefulWidget {
 class _ConnexionScreenState extends State<ConnexionScreen> {
   final _nomController = TextEditingController();
   final _motDePasseController = TextEditingController();
+  bool _motDePasseVisible = false;
 
   @override
   void dispose() {
@@ -23,10 +25,9 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
 
   Future<void> _seConnecter(BuildContext context) async {
     final auth = context.read<AuthProvider>();
-    // Pas de navigation manuelle ici : AuthGate (main.dart) observe
+    // Pas de navigation manuelle ici : AuthGate observe
     // AuthProvider.estConnecte et bascule seul vers HomeScreen dès que la
-    // connexion réussit. Naviguer en plus ici retirerait AuthGate de la
-    // pile et empêcherait la déconnexion ultérieure de fonctionner.
+    // connexion réussit. 
     await auth.connecter(
       _nomController.text,
       _motDePasseController.text,
@@ -38,51 +39,89 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
     final auth = context.watch<AuthProvider>();
     final erreur = auth.erreur;
     final enCours = auth.enCours;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Connexion'), automaticallyImplyLeading: false),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(Icons.code, size: 72, color: Colors.indigo),
-            const SizedBox(height: 8),
-            const Text(
-              'CodeQuiz',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 32),
-            TextField(
-              controller: _nomController,
-              decoration: const InputDecoration(
-                labelText: "Nom d'utilisateur",
-                border: OutlineInputBorder(),
+            const SizedBox(height: AppSpacing.md),
+            Center(
+              child: Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Icon(Icons.code_rounded, size: 48, color: colorScheme.onPrimaryContainer),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              'CodeQuiz',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Teste et progresse en programmation',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            TextField(
+              controller: _nomController,
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(
+                labelText: "Nom d'utilisateur",
+                prefixIcon: Icon(Icons.person_outline),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
             TextField(
               controller: _motDePasseController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: !_motDePasseVisible,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => enCours ? null : _seConnecter(context),
+              decoration: InputDecoration(
                 labelText: 'Mot de passe',
-                border: OutlineInputBorder(),
+                prefixIcon: const Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  icon: Icon(_motDePasseVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                  onPressed: () => setState(() => _motDePasseVisible = !_motDePasseVisible),
+                ),
               ),
             ),
             if (erreur != null) ...[
-              const SizedBox(height: 12),
-              Text(
-                erreur,
-                style: const TextStyle(color: Colors.red),
-                textAlign: TextAlign.center,
+              const SizedBox(height: AppSpacing.md),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.error_outline, color: colorScheme.onErrorContainer, size: 20),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: Text(
+                        erreur,
+                        style: TextStyle(color: colorScheme.onErrorContainer),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
-            const SizedBox(height: 24),
+            const SizedBox(height: AppSpacing.lg),
             ElevatedButton(
               onPressed: enCours ? null : () => _seConnecter(context),
-              style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
               child: enCours
                   ? const SizedBox(
                       width: 20,
@@ -91,7 +130,7 @@ class _ConnexionScreenState extends State<ConnexionScreen> {
                     )
                   : const Text('Se connecter'),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.sm),
             TextButton(
               onPressed: () {
                 context.read<AuthProvider>().effacerErreur();
